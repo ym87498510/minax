@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/next/next"
+  ],
+  "plugins": {
+    "minax": {
+      "version": "dev",
+      "provider": "wx900804bb7d170535"
+    }
+  },
+  "sitemapLocation": "sitemap.json"
+}
