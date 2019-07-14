@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/ym87498510/minax.git"
   },
+  "miniprogram": "dist",
   "keywords": [
     "微信",
     "小程序",
