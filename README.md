@@ -24,8 +24,11 @@ yarn add minax
 ```
 安装成功后，点击开发者工具中的菜单栏：工具 --> 构建 npm 
 ![build](./imgs/build.png)
+
 勾选“使用 npm 模块”选项： 
+
 ![build](./imgs/check-build.png)
+
 构建完成后即可使用 npm 包,js 中引入 npm 包：
 ```javascript
 const Store = require('minax')
