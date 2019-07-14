@@ -1,3 +1,0 @@
-<view>{{info}}</view>
-<view>{{userInfo}}</view>
-<button bindtap="goNext">去下一页</button>
