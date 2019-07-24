@@ -9,7 +9,6 @@ class Store {
       _state_ = this._unifyStateStyle(option.state)
     }
     this.state = this._initState(_state_)
-    console.log(this.state)
     this.mutation = option.mutation || {}
     if (this.easyMode) {
       this._polyfillMutation(this.mutation, _state_)
@@ -22,7 +21,6 @@ class Store {
   //  }
   // }
   _initState (_state_ = {}) {
-    console.log(_state_)
     let state = {}
     Object.keys(_state_).forEach(key => {
       if (_state_[key].persistence) {
@@ -56,9 +54,7 @@ class Store {
    * */
 
   _getStorage(key, def) {
-    console.log(key)
     let res = wx.getStorageSync(key)
-    console.log(res === '')
     return res !== '' ? res : def
   }
 
