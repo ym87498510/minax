@@ -1,13 +1,91 @@
 class Store {
-  constructor(store) {
-    this.easyMode = !!store.easyMode
-    this.bindStorageMode = !!store.bindStorageMode
-    this.state = store.state
-    this.mutation = store.mutation
+  constructor(option = {}) {
+    this.easyMode = !!option.easyMode
+    this.bindStorageMode = !!option.bindStorageMode
+    let _state_
+    if (this.bindStorageMode) {
+      _state_ = option.state || {}
+    } else {
+      _state_ = this._unifyStateStyle(option.state)
+    }
+    this.state = this._initState(_state_)
+    console.log(this.state)
+    this.mutation = option.mutation || {}
+    if (this.easyMode) {
+      this._polyfillMutation(this.mutation, _state_)
+    }
+  }
+
+  // state序列化 {userInfo: {
+  //      persistence: true,
+  //         default: ''
+  //  }
+  // }
+  _initState (_state_ = {}) {
+    console.log(_state_)
+    let state = {}
+    Object.keys(_state_).forEach(key => {
+      if (_state_[key].persistence) {
+        state[key] = this._getStorage(key, _state_[key].default)
+      } else {
+        state[key] = _state_[key].default
+      }
+    })
+    return state
+  }
+
+  _unifyStateStyle(state = {}) {
+    let _state_ = {}
+    Object.keys(state).forEach(key => {
+      _state_[key] = {
+        default: state[key]
+      }
+    })
+    return _state_
+  }
+
+  _setStorage(key, data) {
+    wx.setStorage({
+      key,
+      data
+    })
+  }
+
+  /**
+   * 取不到值，则返回默认值
+   * */
+
+  _getStorage(key, def) {
+    console.log(key)
+    let res = wx.getStorageSync(key)
+    console.log(res === '')
+    return res !== '' ? res : def
+  }
+
+  /**
+   * 补齐mutation, 遍历state,如果没有写state，则补全state
+   * mutation[key] = (state, payload) => {
+   *      state[key] = payload
+   * }
+   * */
+  _polyfillMutation(mutation = {}, _state_ = {}) {
+    Object.keys(_state_).forEach(key => {
+      if (!mutation[key] || typeof mutation[key] !== 'function') {
+        mutation[key] = (state, payload) => {
+          state[key] = payload
+        }
+      }
+      mutation[key].persistence = !!_state_[key].persistence
+    })
   }
 
   commit(type, payload) {
     this.mutation[type](this.state, payload)
+    // 如果需要持久化，则存入缓存
+    if (this.mutation[type].persistence) {
+      this._setStorage(type, this.state[type])
+    }
+    // 如果有订阅序列，则更新
     if (this.registerQueue[type]) {
       this.registerQueue[type].forEach(context => {
         this.assignment(context, type, this.state[type])
