@@ -1,5 +1,5 @@
 function isPlainObject(val) {
-  return toString.call(val) === '[object Object]'
+  return Object.prototype.toString.call(val) === '[object Object]'
 }
 
 /**
