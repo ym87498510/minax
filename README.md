@@ -149,9 +149,10 @@ export default new Store({
 ### action
 action通常用于处理异步事物（你实在要同步使用我也没办法）
 > PS：另一个能用到action的地方是，当你希望设置某个全局方法，并用其更新状态时
->import Store from '../dist/index.js'
 ```javascript
- export default new Store({
+import Store from '../dist/index.js'
+
+export default new Store({
    action: {
      setmark({commit}, payload) {
        setTimeout(() => {
@@ -159,7 +160,7 @@ action通常用于处理异步事物（你实在要同步使用我也没办法�
        }, 2000) 
      }
    }
- })
+})
 ```
 使用时
 ```javascript
