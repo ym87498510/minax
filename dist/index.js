@@ -1,3 +1,7 @@
+/**
+ * 判断一个对象是否室普通对象
+ * return Boolean
+ * */
 function isPlainObject(val) {
   return Object.prototype.toString.call(val) === '[object Object]'
 }
@@ -19,9 +23,44 @@ function objMerge() {
   return args[0];
 }
 
+// 理论上采用setStorage、getStorageSync、setData的小程序都支持
+// 微信wx、阿里my、京东jd、百度swan、头条tt
+let globalinstance;
+(function() {
+  const noop = () => {}
+  try { 
+    globalinstance = my
+  } catch (err) {
+    noop()
+  }
+  try { 
+    globalinstance = wx
+  } catch (err) {
+    noop()
+  }
+  try { 
+    globalinstance = jd
+  } catch (err) {
+    noop()
+  }
+  try { 
+    globalinstance = swan
+  } catch (err) {
+    noop()
+  }
+  try { 
+    globalinstance = tt
+  } catch (err)  {
+    noop()
+  }
+  if (!globalinstance) {
+    throw new Error('[minix]暂不支持当前小程序，当前支持微信wx、阿里my、京东jd、百度swan、头条tt')
+  }
+})()
+
 class Store {
   constructor(option = {}) {
-    this.easyMode = !!option.easyMode
+    // this.easyMode = !!option.easyMode
     this.bindStorageMode = !!option.bindStorageMode
     let _state_
     if (this.bindStorageMode) {
@@ -31,25 +70,25 @@ class Store {
     }
     this.state = this._initState(_state_)
     console.log(this.state)
-    this.mutation = option.mutation || {}
-    if (this.easyMode) {
-      this._polyfillMutation(this.mutation, _state_)
-    }
+    // this.mutation = option.mutation || {}
+    // 这里暂时不接受自定义mutation
+    this.mutation = {}
+    this.action = option.action || {}
+    // if (this.easyMode) {
+    this._polyfillMutation(this.mutation, _state_)
+    // }
   }
 
-  // state序列化 {userInfo: {
-  //      persistence: true,
-  //         default: ''
-  //  }
-  // }
   _initState(_state_ = {}) {
     console.log(_state_)
     let state = {}
     Object.keys(_state_).forEach(key => {
+      // 默认值
+      let defval = _state_[key].default
       if (_state_[key].persistence) {
-        state[key] = this._getStorage(key, _state_[key].default)
+        state[key] = this._getStorage(key, defval)
       } else {
-        state[key] = _state_[key].default
+        state[key] = defval
       }
     })
     return state
@@ -66,7 +105,7 @@ class Store {
   }
 
   _setStorage(key, data) {
-    wx.setStorage({
+    globalinstance.setStorage({
       key,
       data
     })
@@ -77,9 +116,7 @@ class Store {
    * */
 
   _getStorage(key, def) {
-    console.log(key)
-    let res = wx.getStorageSync(key)
-    console.log(res === '')
+    let res = globalinstance.getStorageSync(key)
     return res !== '' ? res : def
   }
 
@@ -96,11 +133,16 @@ class Store {
           state[key] = payload
         }
       }
-      mutation[key].persistence = !!_state_[key].persistence
+      if(this.bindStorageMode) {
+        mutation[key].persistence = !!_state_[key].persistence
+      }
     })
   }
 
   commit(type, payload) {
+    if (typeof this.mutation[type] !== 'function') {
+      throw new Error(`[minax]:The type of '${type}' is not find in state`)
+    }
     this.mutation[type](this.state, payload)
     // 如果需要持久化，则存入缓存
     if (this.mutation[type].persistence) {
@@ -114,12 +156,19 @@ class Store {
     }
   }
 
+  dispatch(type, payload) {
+    if (typeof this.action[type] !== 'function') {
+      throw new Error(`[minax]:The type of '${type}' is not find in action`)
+    }
+    this.action[type](Object.assign({}, this, {commit: this.commit.bind(this)}), payload)
+  }
+
   /*
   * 赋值操作, 将值赋遇到上下文（这里指页面或组件）的data中，调用组件或页面的setData方法
   * @
   */
   assignment(context, key, value) {
-    if (!context.setData) {
+    if (!(context && context.setData)) {
       console.error('Context not has setData method of assignment')
     }
     let obj = {}
@@ -133,6 +182,10 @@ class Store {
   registe(types = [], context) {
     // 注册时给定初始值，将其映射到页面或组件上
     types.forEach(type => {
+      console.log(type)
+      if (!this.state.hasOwnProperty(type)) {
+        throw new Error(`[minax]:The type of '${type}' is not find in state`)
+      }
       this.assignment(context, type, this.state[type])
       // 如果队列未注册，则添加一个空数组
       if (!this.registerQueue[type]) {
@@ -143,13 +196,11 @@ class Store {
         this.registerQueue[type].push(context)
       }
     })
-
-
   }
 
   install(needMount) {
     if (needMount && !isPlainObject(needMount)) {
-      console.error('[minax]:The parameter of installer must be a plain object!')
+      throw new Error('[minax]:The parameter of installer must be a plain object!')
       return
     }
     let _store = this

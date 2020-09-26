@@ -1,0 +1,11 @@
+/* miniprogram/pages/cart/cart.wxss */
+.mark {
+  display: flex;
+  margin: 40px 0;
+}
+
+.mark .mark-input {
+  border: 1px solid #eee;
+  width: 60%;
+  height: 30px;
+}

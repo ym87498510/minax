@@ -1,3 +1,9 @@
-<view>{{info}}</view>
+<view class="list-item">  
+  <view class="list-item-name">香蕉</view>
+  <button class="list-btn sub" bindtap="sub">-</button>
+  <view>{{cartCount || 0}}</view>
+  <button class="list-btn sub" bindtap="add">+</button>
+</view>
+<view class="mark">备注：{{mark || '暂无'}}</view>
 <view>{{userInfo}}</view>
-<button bindtap="goNext">去下一页</button>
+<button bindtap="goNext">去购物车</button>

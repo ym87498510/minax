@@ -2,18 +2,21 @@ Page({
   data: {
     info: '我是首页'
   },
-  mapState: 'userInfo',
+  mapState: ['cartCount', 'mark'],
   onLoad: function() {
-    // this.$store.register('userInfo', this)
-    setTimeout(() => {
-      this.$store.commit('userInfo', '我在index被第一次修改')
-    }, 2000)
-    setTimeout(() => {
-      this.$store.commit('userInfo', '我早index被第二次修改')
-    }, 6000)
   },
   goNext () {
-    wx.navigateTo({url: '/pages/next/next'})
+    wx.navigateTo({url: '/pages/cart/cart'})
+  },
+  add () {
+    let count = this.data.cartCount
+    this.$store.commit('cartCount', count + 1)
+  },
+  sub () {
+    let count = this.data.cartCount
+    count--
+    count < 0 && (count = 0)
+    this.$store.commit('cartCount', count)
   },
   onUnload () {
     console.log('首页面卸载', this)

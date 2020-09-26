@@ -1,7 +1,7 @@
 import store from './store/index.js'
 console.log(store)
-// 方法安装
-store.install({ $store: store})
+// 方法安装,参数可省略，内部会做修正
+store.install()
 
 App({
   onLaunch: function () {

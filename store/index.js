@@ -1,19 +1,27 @@
 import Store from '../dist/index.js'
 
 export default new Store({
-  // easy模式会自动补齐mutation，绑定缓存模式的state参数会少许不一样
-  easyMode: true,
+  // 绑定缓存模式时，state入参不太一样
   bindStorageMode: true,
   state: {
-    userInfo: {
+    cartCount: {
       persistence: true,
-      default: '我是一开始的值'
+      default: 0
+    },
+    mark: {
+      persistence: true,
+      default: ''
     }
   },
-  // mutation: {
-  //   userInfo(state, payload) {
-  //     state['userInfo'] = payload
-  //   }
+  // state: {
+  //   cartCount: 0,
+  //   mark: ''
   // },
-  action: {}
+  action: {
+    setmark({commit}, payload) {
+      setTimeout(() => {
+        commit('mark', payload)
+      }, 2000) 
+    }
+  }
 })

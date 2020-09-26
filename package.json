@@ -1,6 +1,6 @@
 {
   "name": "minax",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "微信小程序状态管理工具，类vuex调用风格，响应式数据更新",
   "main": "dist/index.js",
   "scripts": {

@@ -1,0 +1,6 @@
+<!--miniprogram/pages/next/next.wxml-->
+<text>商品数量：{{cartCount}}</text>
+<view class="mark">
+  <text>订单备注：</text><input class="mark-input" value="{{mark}}" maxlength="20" bindinput="bindKeyInput" placeholder="订单备注信息"/>
+</view>
+<button bindtap="goIndex">去首页</button>

@@ -4,17 +4,16 @@ Page({
   /**
    * 页面的初始数据
    */
-  data: {
-    info: '我是下一页'
-  },
-  mapState: ['userInfo'],
+  data: {},
+  mapState: ['cartCount', 'mark'],
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    setTimeout(() => {
-      this.$store.commit('userInfo', '我在next页面被修改')
-    }, 2000)
+    this.$store.dispatch('setmark', 'efjdkewnjkfdnk')
+  },
+  bindKeyInput(e) {
+    this.$store.commit('mark', e.detail.value)
   },
   goIndex () {
     wx.navigateTo({url: '/pages/index/index'})

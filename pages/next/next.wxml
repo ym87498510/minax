@@ -1,4 +1,0 @@
-<!--miniprogram/pages/next/next.wxml-->
-<text>{{info}}</text>
-<view>{{userInfo}}</view>
-<button bindtap="goIndex">去首页</button>
