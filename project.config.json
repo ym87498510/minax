@@ -10,8 +10,8 @@
 		"preloadBackgroundData": false,
 		"minified": true,
 		"newFeature": true,
-		"coverView": true,
 		"autoAudits": false,
+		"coverView": true,
 		"showShadowRootInWxmlPanel": true,
 		"scopeDataCheck": false,
 		"checkInvalidKey": true,
@@ -22,7 +22,7 @@
 			"disablePlugins": [],
 			"outputPath": ""
 		},
-		"useCompilerModule": false,
+		"useCompilerModule": true,
 		"userConfirmedUseCompilerModuleSwitch": false,
 		"nodeModules": true
 	},

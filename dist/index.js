@@ -1,5 +1,5 @@
 /**
- * 判断一个对象是否室普通对象
+ * 判断一个对象是否是普通对象
  * return Boolean
  * */
 function isPlainObject(val) {
@@ -7,7 +7,7 @@ function isPlainObject(val) {
 }
 
 /**
- * 对象合并，浅克隆,后面参数的值会覆盖前面的值,所有参数必须是一个对象Object
+ * 对象合并，浅克隆，后面参数的值会覆盖前面的值,所有参数必须是一个对象Object
  * */
 function objMerge() {
   let args = Array.from(arguments);
@@ -23,32 +23,32 @@ function objMerge() {
   return args[0];
 }
 
-// 理论上采用setStorage、getStorageSync、setData的小程序都支持
+// 理论上采用xx.setStorage、xx.getStorageSync、xx.setData的小程序都支持
 // 微信wx、阿里my、京东jd、百度swan、头条tt
 let globalinstance;
 (function() {
   const noop = () => {}
-  try { 
+  try {
     globalinstance = my
   } catch (err) {
     noop()
   }
-  try { 
+  try {
     globalinstance = wx
   } catch (err) {
     noop()
   }
-  try { 
+  try {
     globalinstance = jd
   } catch (err) {
     noop()
   }
-  try { 
+  try {
     globalinstance = swan
   } catch (err) {
     noop()
   }
-  try { 
+  try {
     globalinstance = tt
   } catch (err)  {
     noop()
@@ -164,7 +164,7 @@ class Store {
   }
 
   /*
-  * 赋值操作, 将值赋遇到上下文（这里指页面或组件）的data中，调用组件或页面的setData方法
+  * 赋值操作, 将值赋予到上下文（这里指页面或组件）的data中，调用组件或页面的setData方法
   * @
   */
   assignment(context, key, value) {
