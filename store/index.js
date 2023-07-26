@@ -4,14 +4,14 @@ export default new Store({
   // 绑定缓存模式时，state入参不太一样
   bindStorageMode: true,
   state: {
-    cartCount: {
-      persistence: true,
-      default: 0
-    },
-    mark: {
-      persistence: true,
-      default: ''
-    }
+    // cartCount: {
+    //   persistence: true,
+    //   default: 0
+    // },
+    // mark: {
+    //   persistence: true,
+    //   default: ''
+    // }
   },
   // state: {
   //   cartCount: 0,
@@ -21,7 +21,7 @@ export default new Store({
     setmark({commit}, payload) {
       setTimeout(() => {
         commit('mark', payload)
-      }, 2000) 
+      }, 2000)
     }
   }
 })
