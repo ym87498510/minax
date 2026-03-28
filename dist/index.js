@@ -198,6 +198,14 @@ class Store {
     })
   }
 
+  // 卸载订阅列表
+  unregiste(types = [], context) {
+    types.forEach(type => {
+      const index = this.registerQueue[type].indexOf(context)
+      this.registerQueue[type].splice(index, 1)
+    })
+  }
+
   install(needMount) {
     if (needMount && !isPlainObject(needMount)) {
       throw new Error('[minax]:The parameter of installer must be a plain object!')
@@ -219,26 +227,31 @@ class Store {
         // 旧的注入方法
         // config.$store = this
         let firstLifeHookName = (componentLikeFns.indexOf(originFn) > -1) ? 'attached' : 'onLoad'
-        !config[firstLifeHookName] && (config[firstLifeHookName] = function () {
-        })
-        const originFirstLifeHook = config[firstLifeHookName]
-        config[firstLifeHookName] = function () {
-          // 将方法注入进this,达到处处this.的调用
-          objMerge(this, _needMount)
-          if (config.mapState) {
-            // 接受传入的数据，传的是数组，则返回数组，如果传的是字符串，则使用字符串
-            // TODO，后期会改成接受key: value的形式，key 为type, 可以是getter函数的形式，达成类似vuex的效果
-            let list = []
-            if (Array.isArray(config.mapState)) {
-              list = config.mapState
-            } else if (typeof config.mapState === 'string') {
-              list.push(config.mapState)
+        let lastLifeHookName = (componentLikeFns.indexOf(originFn) > -1) ? 'detached' : 'onUnload'
+
+        const map = { [firstLifeHookName]: 'registe', [lastLifeHookName]: 'unregiste' }
+        Object.keys(map).forEach(hookName => {
+          const originLifeHook = config[hookName] || function() {}
+          config[hookName] = function () {
+            if(hookName === firstLifeHookName) {
+              // 将方法注入进this,达到处处this.的调用
+              objMerge(this, _needMount)
             }
-            _store.registe(list, this)
+            if (config.mapState) {
+              // 接受传入的数据，传的是数组，则返回数组，如果传的是字符串，则使用字符串
+              // TODO，后期会改成接受key: value的形式，key 为type, 可以是getter函数的形式，达成类似vuex的效果
+              let list = []
+              if (Array.isArray(config.mapState)) {
+                list = config.mapState
+              } else if (typeof config.mapState === 'string') {
+                list.push(config.mapState)
+              }
+              const funcName = map[hookName]
+              _store[funcName](list, this)
+            }
+            originLifeHook.apply(this, arguments)
           }
-          originFirstLifeHook.apply(this, arguments)
-        }
-        // TODO 后期会增加对卸载的处理
+        })
         originFn(config)
       }
       switch (originFn) {
